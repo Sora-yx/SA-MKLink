@@ -32,12 +32,12 @@ namespace SA_MKLink.Modules
             return modName;
         }
 
-        public void SetModName(string path)
+        public void SetModName(string name)
         {
-            if (path == null)
+            if (name == null || name == "")
                 return;
 
-            modName = path;
+            modName = name;
             return;
         }
 
@@ -47,9 +47,15 @@ namespace SA_MKLink.Modules
             modPath = GetGamePath() + "\\mods\\" + GetModName();
 
         }
+
+        public string GetModFolder()
+        {    
+            return GetGamePath() + "\\mods\\";
+        }
+
         public void SetGamePath(string path)
         {
-            if (path == null)
+            if (path == null || path == "")
                 return;
 
             gamePath = path;
@@ -58,7 +64,7 @@ namespace SA_MKLink.Modules
 
         public void SetVSPath(string path)
         {
-            if (path == null)
+            if (path == null || path == "")
                 return;
 
             VSPath = path;
@@ -68,7 +74,7 @@ namespace SA_MKLink.Modules
         public void SetConfig()
         {
             string txt = "config.ini";
-            Console.WriteLine("Looking for config.ini...");
+            Console.WriteLine("Searching for config.ini...");
 
             try
             {

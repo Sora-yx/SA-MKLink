@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SA_MKLink.Modules;
 
@@ -18,11 +10,32 @@ namespace SA_MKLink
 
         GameConfig Game = new GameConfig();
 
+        enum Error
+        {
+            FieldUncomplete,
+            VSFolderNotFound,
+            DLLModNotFound,
+        }
+
         public SAMkLink()
         {
             InitializeComponent();
             Game.SetConfig();
             SetAndDisplayPath();
+        }
+
+        private void SavePathInformation()
+        {
+            Game.SetVSPath(textBoxVSPath.Text);
+            Game.SetGamePath(textBoxGamePath.Text);
+
+            Game.SetModName(textBox3.Text);
+            Game.SetModPath();
+
+            StreamWriter sw = new StreamWriter("config.ini");
+            sw.WriteLine(textBoxVSPath.Text);
+            sw.WriteLine(textBoxGamePath.Text);
+            sw.Close();
         }
 
         private void SetAndDisplayPath()
@@ -36,6 +49,31 @@ namespace SA_MKLink
             {
                 textBoxVSPath.Text = Game.GetVSPath();
             }
+        }
+
+        static private void ErrorHandler(Error error)
+        {
+            string errorMSG;
+
+            switch (error)
+            {
+                case Error.FieldUncomplete:
+                    errorMSG = "Please fill out all fields completely.";
+                    MessageBox.Show(errorMSG, "Uncomplete");
+                    return;
+                case Error.VSFolderNotFound:
+                     errorMSG = "Error when trying to access to the VS Project Folder, make sure the path is correct and the mod name match your VS Folder name.";
+                    MessageBox.Show(errorMSG, "Visual Studio Project folder not found.");
+                    return;
+                case Error.DLLModNotFound:
+                    errorMSG = "Error when trying to access to the DLL from your VS Project Folder, did you forget to build the DLL?";
+                    MessageBox.Show(errorMSG, "DLL Mod not found");
+                    return;
+
+            }
+
+            return;
+
         }
 
         static void RunMkLink(string modPath, string vsPath)
@@ -97,88 +135,108 @@ namespace SA_MKLink
 
         private void CreateModFolder(string modPath, string modname)
         {
+            string newModName = modname;
+            newModName = newModName.Replace("-", " ");
+            newModName = newModName.Replace("_", " ");
+
             StreamWriter sw = new StreamWriter(modPath + "\\mod.ini");
-            sw.WriteLine("Name=" + Game.GetModName());
+            sw.WriteLine("Name=" + newModName);
             sw.WriteLine("Author=" + Environment.UserName);
             sw.WriteLine("Version=0.1");
-            sw.WriteLine("Description=" + "my epic mod");
+            sw.WriteLine("Description=" + "my epic mod!");
             sw.WriteLine("DLLFile=" + modname + ".dll");
             sw.Close();
+            return;
         }
 
         private void MKLink_Button(object sender, EventArgs e)
         {
+
+            SavePathInformation();
+
             var modname = Game.GetModName();
             var vspath = Game.GetVSPath();
 
-
             if (Game.GetGamePath() == null || vspath == null || modname == null)
             {
-                string error = "Please fill out all fields completely.";
-                MessageBox.Show(error, "Uncomplete");
+                ErrorHandler(Error.FieldUncomplete);
                 return;
             }
 
             if (!Directory.Exists(vspath + "\\" + modname))
             {
-                string error = "Error when trying to access to the VS Project Folder, make sure the path is correct and the mod name match your VS Folder name.";
-                MessageBox.Show(error, "Visual Studio Project folder not found");
+                ErrorHandler(Error.VSFolderNotFound);
                 return;
             }
 
             //try to get the DLL File from VS folder with bin, release and debug.
-
             string vsDLLPath = vspath + "\\" + modname;
             string fullVSDllPath = vsDLLPath + "\\bin\\" + modname + ".dll";
             bool isPathValid = false;
 
-            if (File.Exists(fullVSDllPath))
-            {
-                isPathValid = true;
-            }
-            else
-            {
-                fullVSDllPath = vsDLLPath + "\\Release\\" + modname + ".dll";
+             if (File.Exists(fullVSDllPath))
+             {
+                 isPathValid = true;
+             }
+             else
+             {
+                 fullVSDllPath = vsDLLPath + "\\Release\\" + modname + ".dll";
 
-                if (File.Exists(fullVSDllPath))
-                {
-                    isPathValid = true;
-                }
-                else
-                {
-                    fullVSDllPath = vsDLLPath + "\\Debug\\" + modname + ".dll";
+                 if (File.Exists(fullVSDllPath))
+                 {
+                     isPathValid = true;
+                 }
+                 else
+                 {
+                     fullVSDllPath = vsDLLPath + "\\Debug\\" + modname + ".dll";
 
-                    if (File.Exists(fullVSDllPath))
-                    {
-                        isPathValid = true;
-                    }
-                }
-            }
+                     if (File.Exists(fullVSDllPath))
+                     {
+                         isPathValid = true;
+                     }
+                 }
+             }
 
             if (!isPathValid)
             {
-                string error = "Error when trying to access to the DLL from your VS Project Folder, did you forget to build the DLL?";
-                MessageBox.Show(error, "DLL Mod not found");
+                ErrorHandler(Error.DLLModNotFound);
                 return;
             }
 
 
+            //try to get the mod folder where the game is installed.
             string modPath = Game.GetModPath();
 
             if (!Directory.Exists(modPath))
             {
-                string error = "Error when trying to access Mod Folder from the game, the mod doesn't seem to exist.\n" +
-                    "Would you like the program to create and set the mod for you?";
-                DialogResult msg = MessageBox.Show(error,
-                      "Mod not found", MessageBoxButtons.YesNo);
-                switch (msg)
+                //if the mod name doesn't match, try to remove any underscore just in case the user didn't use them for the mod folder.
+                string newModName = modname;
+                newModName = newModName.Replace("-", " ");
+                newModName = newModName.Replace("_", " ");
+
+                string newModPath = Game.GetModFolder() + "\\" + newModName;
+
+                //if everything above fail, ask the user to create the mod.
+                if (!Directory.Exists(newModPath))
                 {
-                    case DialogResult.Yes:
-                        Directory.CreateDirectory(modPath);
-                        CreateModFolder(modPath, modname);
-                        break;
-                    case DialogResult.No:
-                        return;
+                    string error = "Error when trying to access Mod Folder from the game, the mod doesn't seem to exist.\n" +
+                    "Would you like the program to create and set the mod for you?";
+                    DialogResult msg = MessageBox.Show(error,
+                          "Mod not found", MessageBoxButtons.YesNo);
+
+                    switch (msg)
+                    {
+                        case DialogResult.Yes:
+                            Directory.CreateDirectory(modPath);
+                            CreateModFolder(modPath, modname);
+                            break;
+                        case DialogResult.No:
+                            return;
+                    }
+                }
+                else
+                {
+                    modPath = newModPath;
                 }
             }
 
@@ -188,9 +246,6 @@ namespace SA_MKLink
 
         private void textBoxModName_TextChanged(object sender, EventArgs e)
         {
-            Game.SetModName(textBox3.Text);
-            Game.SetModPath();
-            return;
         }
     }
 }

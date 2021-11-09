@@ -31,6 +31,7 @@ namespace SA_MKLink
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -42,6 +43,10 @@ namespace SA_MKLink
             this.label5 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.mklinkTip = new System.Windows.Forms.ToolTip(this.components);
+            this.VSTip = new System.Windows.Forms.ToolTip(this.components);
+            this.gameLocationTip = new System.Windows.Forms.ToolTip(this.components);
+            this.modNameTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // label1
@@ -59,22 +64,24 @@ namespace SA_MKLink
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(30, 144);
+            this.label2.Location = new System.Drawing.Point(30, 145);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(175, 28);
             this.label2.TabIndex = 2;
             this.label2.Text = "Game PC Location:";
+            this.gameLocationTip.SetToolTip(this.label2, "Select your game location (where sonic.exe or sonic2app.exe is).");
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(30, 220);
+            this.label3.Location = new System.Drawing.Point(30, 218);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(275, 28);
+            this.label3.Size = new System.Drawing.Size(283, 28);
             this.label3.TabIndex = 5;
-            this.label3.Text = "Visual Studio Project Location:";
+            this.label3.Text = "Visual Studio Projects Location:";
+            this.VSTip.SetToolTip(this.label3, "Select the folder where all your VS Projects are located. (ex: \"D:/GitHub\")");
             // 
             // textBoxGamePath
             // 
@@ -82,6 +89,7 @@ namespace SA_MKLink
             this.textBoxGamePath.Name = "textBoxGamePath";
             this.textBoxGamePath.Size = new System.Drawing.Size(354, 23);
             this.textBoxGamePath.TabIndex = 6;
+            this.gameLocationTip.SetToolTip(this.textBoxGamePath, "Select your game location (where sonic.exe or sonic2app.exe is).");
             // 
             // textBoxVSPath
             // 
@@ -89,6 +97,7 @@ namespace SA_MKLink
             this.textBoxVSPath.Name = "textBoxVSPath";
             this.textBoxVSPath.Size = new System.Drawing.Size(354, 23);
             this.textBoxVSPath.TabIndex = 7;
+            this.VSTip.SetToolTip(this.textBoxVSPath, "Select the folder where all your VS Projects are located. (ex: \"D:/GitHub\")");
             // 
             // button3
             // 
@@ -99,6 +108,7 @@ namespace SA_MKLink
             this.button3.Size = new System.Drawing.Size(177, 43);
             this.button3.TabIndex = 9;
             this.button3.Text = "Process MKLink";
+            this.mklinkTip.SetToolTip(this.button3, "Create Mod Folder (if it doesn\'t exist) and  symbolic link with your mod DLL.");
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.MKLink_Button);
             // 
@@ -108,6 +118,8 @@ namespace SA_MKLink
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(354, 23);
             this.textBox3.TabIndex = 10;
+            this.modNameTip.SetToolTip(this.textBox3, "Please enter the name of your mod, it must match the folder name of your VS Proje" +
+        "ct.");
             this.textBox3.TextChanged += new System.EventHandler(this.textBoxModName_TextChanged);
             // 
             // label4
@@ -116,9 +128,11 @@ namespace SA_MKLink
             this.label4.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label4.Location = new System.Drawing.Point(30, 71);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(115, 28);
+            this.label4.Size = new System.Drawing.Size(152, 28);
             this.label4.TabIndex = 11;
-            this.label4.Text = "Mod Name:";
+            this.label4.Text = "DLL Mod Name:";
+            this.modNameTip.SetToolTip(this.label4, "Please enter the name of your mod, it must match the folder name of your VS Proje" +
+        "ct.");
             this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // label5
@@ -133,9 +147,9 @@ namespace SA_MKLink
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(415, 161);
+            this.button1.Location = new System.Drawing.Point(415, 169);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(135, 38);
+            this.button1.Size = new System.Drawing.Size(135, 34);
             this.button1.TabIndex = 13;
             this.button1.Text = "Browse";
             this.button1.UseVisualStyleBackColor = true;
@@ -143,13 +157,27 @@ namespace SA_MKLink
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(415, 237);
+            this.button2.Location = new System.Drawing.Point(415, 243);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(135, 35);
+            this.button2.Size = new System.Drawing.Size(135, 32);
             this.button2.TabIndex = 14;
             this.button2.Text = "Browse";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.VSLocation_Button);
+            // 
+            // mklinkTip
+            // 
+            this.mklinkTip.AutomaticDelay = 200;
+            this.mklinkTip.AutoPopDelay = 5000;
+            this.mklinkTip.InitialDelay = 200;
+            this.mklinkTip.ReshowDelay = 40;
+            // 
+            // VSTip
+            // 
+            this.VSTip.AutomaticDelay = 200;
+            this.VSTip.AutoPopDelay = 5000;
+            this.VSTip.InitialDelay = 200;
+            this.VSTip.ReshowDelay = 40;
             // 
             // SAMkLink
             // 
@@ -186,6 +214,10 @@ namespace SA_MKLink
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ToolTip mklinkTip;
+        private System.Windows.Forms.ToolTip VSTip;
+        private System.Windows.Forms.ToolTip gameLocationTip;
+        private System.Windows.Forms.ToolTip modNameTip;
     }
 }
 
