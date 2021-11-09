@@ -5,6 +5,19 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>SA_MKLink</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
+    <Authors>Sora</Authors>
+    <Description>Allows you to automatically add a MK Link to Sonic Adventure DLL Mods. It also creates and config the mod if it doesn't exist.</Description>
+    <PackageIcon>Icon.png</PackageIcon>
+    <PackageIconUrl />
+    <RepositoryUrl>https://github.com/Sora-yx/SA-MKLink</RepositoryUrl>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\Icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
